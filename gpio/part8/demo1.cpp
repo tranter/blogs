@@ -14,7 +14,7 @@ platforms.
 #include "libsoc_debug.h"
 
 // Uncomment the appropriate lines below for the hardware it is
-// runnning on.
+// running on.
 
 // Raspberry Pi
 //const int led1   = 24; // Red LED
