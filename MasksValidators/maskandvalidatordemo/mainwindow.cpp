@@ -25,7 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->maskLineEdit, &QLineEdit::textChanged, [=](const QString &newMask) { ui->inputLineEdit->setInputMask(newMask); });
 
     // Handle validator type combo box changing.
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    connect(ui->validatorTypeComboBox, qOverload<int, const QString &>(&QComboBox::currentIndexChanged), this, &MainWindow::setValidator);
+#else
     connect(ui->validatorTypeComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &MainWindow::setValidator);
+#endif
 
     // If any settings change, update the validator.
     connect(ui->intTopSpinBox, qOverload<int>(&QSpinBox::valueChanged), this, &MainWindow::setValidator);
@@ -33,7 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->doubleTopSpinBox, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &MainWindow::setValidator);
     connect(ui->doubleBottomSpinBox, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &MainWindow::setValidator);
     connect(ui->decimalsSpinBox, qOverload<int>(&QSpinBox::valueChanged), this, &MainWindow::setValidator);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    connect(ui->notationComboBox, qOverload<int, const QString &>(&QComboBox::currentIndexChanged), this, &MainWindow::setValidator);
+#else
     connect(ui->notationComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &MainWindow::setValidator);
+#endif
     connect(ui->regularExpressionLineEdit, &QLineEdit::textChanged, this, &MainWindow::setValidator);
 
     // Update status bar when line edit changes.
