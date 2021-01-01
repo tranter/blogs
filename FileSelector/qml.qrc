@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>+linux/main.qml</file>
+        <file>+mac/main.qml</file>
+        <file>+windows/main.qml</file>
+        <file>image.png</file>
+        <file>+linux/image.png</file>
+        <file>+mac/image.png</file>
+        <file>+windows/image.png</file>
+    </qresource>
+</RCC>
