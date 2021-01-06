@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  /* Blink LEDs in a binary pattern */
+  // Blink LEDs in a binary pattern
   i = 0;
   while (true) {
     ret = gpiod_line_set_value(lineRed, (i & 1) != 0);
