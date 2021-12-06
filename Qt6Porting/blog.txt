@@ -50,9 +50,9 @@ One example used the QXmlSimpleReader class, which was removed in Qt 6. The alte
 
 CMake
 
-In Qt 6, the process of building Qt itself now uses CMake. Using qmake is still supported, but CMake has become an industry standard, offers a number of advantages, and is recommended for new Qt projects. For bonus points I created project files to build some of the examples with CMake. It was a straightforward but manual process. I basically copied a typical Qt CMakeLists.txt file and edited it to set the project name and list of source files.
+In Qt 6, the process of building Qt itself now uses CMake. Using qmake is still supported, but CMake has become an industry standard, offers a number of advantages, and is recommended for new Qt projects. For bonus points I created project files to build the examples with CMake. It was a straightforward, but manual, process. I basically copied a typical Qt CMakeLists.txt file and edited it to set the project name and list of source files.
 
-I don't know of any automated tool to bulk convert qmake projects to CMake - such a tool would be useful if you had many projects to convert.
+If you need to convert make qmake projects top CMake, you may want to explore the pro2cmake.py script that is part of the Qt source release. See this link https://wiki.qt.io/CMake_Port/Porting_Guide for more details.
 
 Conclusions
 
