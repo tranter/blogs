@@ -1,0 +1,111 @@
+Open Source Tools For C++ Static Analysis
+
+INTRODUCTION
+
+In this blog post I'll discuss some open source tools that can be used
+to perform static analysis of C++ code.
+
+WHAT IS STATIC ANALYSIS?
+
+Wikipedia[1] has this definition of static analysis:
+
+  In computer science, static program analysis (also known as static
+  analysis or static simulation) is the analysis of computer programs
+  performed without executing them, in contrast with dynamic program
+  analysis, which is performed on programs during their execution in the
+  integrated environment.
+
+  The term is usually applied to analysis performed by an automated
+  tool, with human analysis typically being called "program
+  understanding", program comprehension, or code review. In the last of
+  these, software inspection and software walkthroughs are also used. In
+  most cases the analysis is performed on some version of a program's
+  source code, and, in other cases, on some form of its object code.
+
+Static analysis can be useful for finding software defects such as
+programming errors, coding standard violations, use of undefined
+values, an security vulnerabilities. Buffer overflows are one example
+of a common software vulnerability that can often be detect by static
+analysis.
+
+WHY IS IT IMPORTANT?
+
+Safety critical software such as medical, nuclear, aviation, and
+automotive systems are industries where static analysis has
+traditionally been used to improve software quality and detect
+defects.
+
+With increasing awareness of Cybersecurity, particularly as devices
+become more complex and connected, software for industrial and even
+consumer products can be considered safety critical and/or to have
+privacy concerns that require that the software be developed with
+security in mind.
+
+Unlike some newer languages, like Rust, which enforce memory safety,
+C++ programmers must design their code to be safe. Static analysis is
+one tool to help ensure that this was done.
+
+OPENSOURCE TOOLS
+
+There are many good commercial tools for static analysis. They tend to
+be quite expensive (several hundred dollars per year per developer, if
+not more). If you are on a limited budget, perhaps an open source
+developer, there are some open source static analyzer tools that may
+meet your needs at no cost.
+
+CPPCHECK
+
+Summary...
+Show sample output.
+I have found need to suppress some checks, point it to headers, etc...?
+
+SCAN-BUILD
+
+scan-build (Clang static analyzer)
+Show sample output.
+Does it fail to understand Qt's memory allocation system and report
+memory leaks?
+
+QMLLINT
+
+Show sample output.
+
+CLAZY
+CLANG-TIDY
+
+These are integrated into the Qt Creator IDE
+Show sample output.
+
+How to run clazy on command line?
+https://www.youtube.com/watch?v=c0ie0xww7SA
+https://github.com/KDABLabs/kdabtv/tree/master/Qt-Widgets-and-more/scripts
+LOOKS QUITE COMPLICATED AND YOU NEED TO HAVE RUN BUILD WITH QT CREATOR FIRST?
+
+Show examples for:
+
+- Qt training examples
+- QicsTable
+- spreadsheet?
+
+CONCLUSIONS
+
+Typically want to run these as part of your CI system and enforce
+passing static analysis checks before code is accepted.
+
+I only looked at open source tools (not proprietary, even if free to use).
+Also not other languages like C, Python, etc.
+
+REFERENCES
+
+1. https://en.wikipedia.org/wiki/Static_program_analysis
+
+Refer to "The Qt Developer's Bag of Tricks" parts I and II.
+https://www.ics.com/qt-developers-bag-tricks-part-1
+https://www.ics.com/qt-developers-bag-tricks-part-2
+
+1. https://www.ics.com/qt-developers-bag-tricks-part-1
+2. https://www.ics.com/qt-developers-bag-tricks-part-2
+scan-build
+clazy
+cpplint
+qmllint
