@@ -2,8 +2,7 @@ Open Source Tools For C++ Static Analysis
 
 INTRODUCTION
 
-In this blog post I'll discuss some open source tools that can be used
-to perform static analysis of C++ code.
+In this blog post I'll discuss some open source tools that can be used to perform static analysis of C++ code.
 
 WHAT IS STATIC ANALYSIS?
 
@@ -22,90 +21,114 @@ Wikipedia[1] has this definition of static analysis:
   most cases the analysis is performed on some version of a program's
   source code, and, in other cases, on some form of its object code.
 
-Static analysis can be useful for finding software defects such as
-programming errors, coding standard violations, use of undefined
-values, an security vulnerabilities. Buffer overflows are one example
-of a common software vulnerability that can often be detect by static
-analysis.
+Static analysis can be useful for finding software defects such as programming errors, coding standard violations, use of undefined values, and security vulnerabilities. Buffer overflows are one example of a common software vulnerability that can often be detected by static analysis.
 
 WHY IS IT IMPORTANT?
 
-Safety critical software such as medical, nuclear, aviation, and
-automotive systems are industries where static analysis has
-traditionally been used to improve software quality and detect
-defects.
+Safety critical software in industries such as medical, nuclear, aviation, and automotive systems are areas where static analysis is commonly used to improve software quality and detect defects.
 
-With increasing awareness of Cybersecurity, particularly as devices
-become more complex and connected, software for industrial and even
-consumer products can be considered safety critical and/or to have
-privacy concerns that require that the software be developed with
-security in mind.
+With increasing awareness of Cybersecurity, particularly as devices become more complex and connected, software for industrial and even consumer products can be considered safety critical and/or to have privacy concerns that require that the software be developed with security in mind.
 
-Unlike some newer languages, like Rust, which enforce memory safety,
-C++ programmers must design their code to be safe. Static analysis is
-one tool to help ensure that this was done.
+Unlike some newer languages, like Rust, which enforce memory safety, C++ programmers must design their code to be safe. Static analysis is one tool to help ensure that this is done.
 
-OPENSOURCE TOOLS
+OPEN-SOURCE TOOLS
 
-There are many good commercial tools for static analysis. They tend to
-be quite expensive (several hundred dollars per year per developer, if
-not more). If you are on a limited budget, perhaps an open source
-developer, there are some open source static analyzer tools that may
-meet your needs at no cost.
+There are many good commercial tools for static analysis. They tend to be quite expensive (several hundred dollars per year per developer, if not more). If you are on a limited budget, and perhaps an open source developer, there are some open source static analyzer tools that may meet your needs at no cost.
 
 CPPCHECK
 
-Summary...
-Show sample output.
-I have found need to suppress some checks, point it to headers, etc...?
+Cppcheck[2] is a static analysis tool for C/C++ code. According to the documentation "It provides unique code analysis to detect bugs and focuses on detecting undefined behaviour and dangerous coding constructs. Cppcheck is designed to be able to analyze your C/C++ code even if it has non-standard syntax (common in embedded projects)."
+
+Cppcheck is available both as open-source and as Cppcheck Premium[3] with extended functionality and support.
+
+It is available as the package cppcheck on most Linux distributions and you can download an installer for Windows. If a binary for your system is not available you can download the source code and build it yourself.
+
+In my experience it is somewhat limited in the checks it performs but it is quite easy to set up and use. You'll want to read the documentation and use suitable command line options when you run it (for example, to point it to the location of header files for third party code like Qt, if applicable).
+
+Here is some sample output showing some issues it detected:
+
+foo1.cpp:116:44: error: Uninitialized variable: orientation [uninitvar]
+        stream >> _col1 >> _col2 >> (int&) orientation;
+                                          ^
+
+foo2.cpp:6:13: warning: Member variable 'MainWindow::m_view' is not initialized in the constructor. [uninitMemberVar]
+MainWindow::MainWindow(QWidget *parent) :
+            ^
+
+foo3.cpp:54:4: warning: Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
+   Passwd = NULL;
+   ^
+
+foo4.cpp:226:31: warning: Possible null pointer dereference: translationCtrl() [nullPointer]
+        return translationCtrl()->dateTimeFormat(dateTime,
+                              ^
 
 SCAN-BUILD
 
-scan-build (Clang static analyzer)
-Show sample output.
-Does it fail to understand Qt's memory allocation system and report
-memory leaks?
+Scan-build[4] is a command line tool that runs a static analyzer that is part of the Clang compiler. It uses your existing build system (e.g. make) and works by overriding your regular compile (via the CC and CXX environment variables) to use Clang or gcc's static analyzer instead.
+
+Upon completion, HTML files are generated that can be displayed within a web browser.
+
+Below is some sample output:
+
+[scan-build1.png]
+[scan-build2.png]
+[scan-build3.png]
+
+I have not used it heavily, but it seems to work well. Some limitations are that you code needs to be buildable using the clang or gcc compiler and it appears that it fails to understand Qt's memory allocation system, so it may report memory leaks in Qt code that are not valid.
 
 QMLLINT
 
-Show sample output.
+Static analysis can be particularly useful in detecting errors at build time, such as part of your continuous integration (CI) system. Qt code that uses QML presents the challenge that the code is only verified at run-time (unless you are using the QML compiler). Fortunately Qt provides a tool called qmllint[5] that can be run on QML source files and detects syntax errors as well as warnings about issues like the use of deprecated components and properties and unused imports.
 
-CLAZY
-CLANG-TIDY
+Here is some sample output:
 
-These are integrated into the Qt Creator IDE
-Show sample output.
+Warning: ../MasksValidators/qmldemo/Page1.qml:24:29: Unqualified access [unqualified]
+            font.pixelSize: fontSize
+                            ^^^^^^^^
 
-How to run clazy on command line?
-https://www.youtube.com/watch?v=c0ie0xww7SA
-https://github.com/KDABLabs/kdabtv/tree/master/Qt-Widgets-and-more/scripts
-LOOKS QUITE COMPLICATED AND YOU NEED TO HAVE RUN BUILD WITH QT CREATOR FIRST?
+Info: fontSize is a member of a parent element.
+      You can qualify the access with its id to avoid this warning.
 
-Show examples for:
+            font.pixelSize: <id>.fontSize
+                            ^^^^^
 
-- Qt training examples
-- QicsTable
-- spreadsheet?
+Info: ../MasksValidators/qmldemo/main.qml:1:1: Unused import [unused-imports]
+import QtQuick 2.6
+^^^^^^
+
+Warning: ../calculator-qml/qml/Calculator.qml:48:21: Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead. [Quick.layout-positioning]
+            height: 56
+                    ^^
+
+I have found it useful to add qmllint to CI for Qt-based projects, to go along with static analysis of the C++ code. As the qmllint tool only accepts a single source file, typically you will want to wrap it in a shell script which runs qmllint on all of the desired QML (and JavaScript) files using the correct qmllint program for the Qt version you are using.
+
+CLAZY and CLANG-TIDY
+
+Clazy and Clang-Tidy[6] are two tools supported by the Qt Creator IDE that analyze C++ source code for common programming errors and code that does not follow Qt best practices or programming style. It is highly recommended for developers to use these and follow their recommendations, much like one should correct compiler warnings.
+
+Some sample output is shown below:
+
+[clazy1.png]
+[clazy2.png]
+[clazy3.png]
+
+If you want to run these checks on a CI system outside of the Qt Creator IDE, it can be tricky to set up, but some information can be found in this YouTube video[7].
 
 CONCLUSIONS
 
-Typically want to run these as part of your CI system and enforce
-passing static analysis checks before code is accepted.
+In this blog posted I've concentrated only on open source tools for C++ static analysis. As mentioned, there also commercially available tools do this. There are also tools applicable to other programming languages like C and Python.
 
-I only looked at open source tools (not proprietary, even if free to use).
-Also not other languages like C, Python, etc.
+Typically you will want to run static analysis as part of your CI system, and make passing static analysis checks one of the requirements for accepting code, along with code reviews, successful compilation, and execution of unit tests.
 
 REFERENCES
 
 1. https://en.wikipedia.org/wiki/Static_program_analysis
-
-Refer to "The Qt Developer's Bag of Tricks" parts I and II.
-https://www.ics.com/qt-developers-bag-tricks-part-1
-https://www.ics.com/qt-developers-bag-tricks-part-2
-
-1. https://www.ics.com/qt-developers-bag-tricks-part-1
-2. https://www.ics.com/qt-developers-bag-tricks-part-2
-scan-build
-clazy
-cpplint
-qmllint
+2. https://cppcheck.sourceforge.io/
+3. https://www.cppcheck.com/
+4. https://clang-analyzer.llvm.org/scan-build.html
+5. https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html
+6. https://doc.qt.io/qtcreator/creator-clang-tools.html
+7. https://www.youtube.com/watch?v=c0ie0xww7SA
+8. https://www.ics.com/qt-developers-bag-tricks-part-1
+9. https://www.ics.com/qt-developers-bag-tricks-part-2
