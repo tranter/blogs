@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(gpiod LANGUAGES C)
+project(example LANGUAGES C)
 
-add_executable(example example.c)
-target_link_libraries(example gpiod)
+add_executable(${PROJECT_NAME} example.c)
+target_link_libraries(${PROJECT_NAME} gpiod)
