@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/down_24.png</file>
+        <file>i18n/lang_en_US.qm</file>
+        <file>i18n/lang_en_US.ts</file>
+        <file>i18n/lang_ru_RU.qm</file>
+        <file>i18n/lang_ru_RU.ts</file>
+        <file>i18n/lang_fr_FR.qm</file>
+        <file>i18n/lang_fr_FR.ts</file>
+    </qresource>
+</RCC>
